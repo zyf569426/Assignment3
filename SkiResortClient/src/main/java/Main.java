@@ -5,7 +5,6 @@ import threads.Producer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +58,7 @@ public class Main {
         }
 
         System.out.println("******************First 32 consumer thread finished***************");
-        System.out.println("total requests has send: " + totalReqs.get());
+        System.out.println("total requests has send by first 32 threads: " + totalReqs.get());
 
         Consumer secondConsumer = new Consumer(blockingQueue, SECOND_THREAD_COUNT, totalReqs);
         for(int i = 0; i < SECOND_CONSUMER_COUNT; i++) {

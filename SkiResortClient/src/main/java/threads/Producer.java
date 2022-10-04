@@ -1,5 +1,6 @@
 package threads;
 
+import io.swagger.client.model.LiftRide;
 import models.LiftData;
 
 import java.util.concurrent.BlockingQueue;
@@ -56,12 +57,15 @@ public class Producer implements Runnable{
     }
 
     private LiftData generate() {
-        int skierID = ThreadLocalRandom.current().nextInt(0, 100000);
         int resortID = ThreadLocalRandom.current().nextInt(0, 10);
-        int liftID = ThreadLocalRandom.current().nextInt(0, 40);
         int seasonID = 2022;
         int dayID = ThreadLocalRandom.current().nextInt(1, 366);
+        int skierID = ThreadLocalRandom.current().nextInt(0, 100000);
+        int liftID = ThreadLocalRandom.current().nextInt(0, 40);
         int time = ThreadLocalRandom.current().nextInt(1, 360);
-        return new LiftData(skierID, resortID, liftID, seasonID, dayID, time);
+        LiftRide liftRide = new LiftRide();
+        liftRide.setTime(time);
+        liftRide.setLiftID(liftID);
+        return new LiftData(resortID, seasonID, dayID, skierID, liftRide);
     }
 }

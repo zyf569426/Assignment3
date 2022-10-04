@@ -1,5 +1,7 @@
 package threads;
 
+import io.swagger.client.ApiClient;
+import io.swagger.client.api.SkiersApi;
 import models.LiftData;
 
 import java.util.concurrent.BlockingQueue;
@@ -58,13 +60,19 @@ public class Consumer implements Runnable{
                 break;
             }
             // Consume value
-            System.out.println("LiftDate consumer thread send: " + count + " requests." );
+//            System.out.println("LiftDate consumer thread send: " + count + " requests." );
         }
     }
 
     private void sendRequest(LiftData tmp) {
         // todo: send request to skiResort server
         if (tmp != null) {
+            ApiClient client = new ApiClient();
+            // todo: set base path after deploy
+            client.setBasePath("");
+            SkiersApi api = new SkiersApi();
+            api.setApiClient(client);
+//            api.writeNewLiftRide();
             //Sleeping on random time to make it realistic
             try {
                 Thread.sleep((long) 1);

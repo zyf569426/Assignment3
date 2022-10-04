@@ -1,6 +1,4 @@
-package models;
-
-import io.swagger.client.model.LiftRide;
+package Models;
 
 /**
  * The type Lift data.
