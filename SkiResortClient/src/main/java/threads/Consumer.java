@@ -1,10 +1,14 @@
 package threads;
 
 import io.swagger.client.ApiClient;
+import io.swagger.client.ApiException;
+import io.swagger.client.ApiResponse;
 import io.swagger.client.api.SkiersApi;
 import models.LiftData;
+import models.SendResult;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,24 +24,29 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Consumer implements Runnable{
 
-    /**
-     * The Blocking queue.
-     */
-    BlockingQueue<LiftData> blockingQueue;
-    private int totalCount;
-    private AtomicInteger totalReq;
+    private BlockingQueue<LiftData> blockingQueue;
+    private int reqCount;
+    // total threads counter for this phase
+    private CountDownLatch latch;
+    // total requests counter for each thread
+    private CountDownLatch subLatch;
+    private SendResult result;
+    private static int RETRY_TIMES = 5;
 
     /**
      * Instantiates a new Consumer.
      *
      * @param blockingQueue the blocking queue
-     * @param target        the target
-     * @param totalReq      the total req
+     * @param reqCount      the req count
+     * @param latch         the latch
+     * @param result        the result
      */
-    public Consumer(BlockingQueue<LiftData> blockingQueue, int target, AtomicInteger totalReq) {
+    public Consumer(BlockingQueue<LiftData> blockingQueue, int reqCount, CountDownLatch latch, SendResult result) {
         this.blockingQueue = blockingQueue;
-        this.totalCount = target;
-        this.totalReq = totalReq;
+        this.reqCount = reqCount;
+        this.latch = latch;
+        this.subLatch = new CountDownLatch(this.reqCount);
+        this.result = result;
     }
 
 
@@ -47,40 +56,47 @@ public class Consumer implements Runnable{
     }
 
     private void consume() {
-        int count = 0;
-        while (count < totalCount) {
-            LiftData value;
+        while (subLatch.getCount() > 0) {
             try {
-                value = blockingQueue.take();
+                LiftData value = blockingQueue.take();
                 sendRequest(value);
-                count++;
-                totalReq.getAndIncrement();
+                subLatch.countDown();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 break;
             }
-            // Consume value
-//            System.out.println("LiftDate consumer thread send: " + count + " requests." );
         }
+        latch.countDown();
     }
 
     private void sendRequest(LiftData tmp) {
-        // todo: send request to skiResort server
         if (tmp != null) {
             ApiClient client = new ApiClient();
-            // todo: set base path after deploy
-            client.setBasePath("");
+            // todo: Update base path after deploy
+            client.setBasePath("http://127.0.0.1:8080/SkiResortServlet_war_exploded/");
             SkiersApi api = new SkiersApi();
             api.setApiClient(client);
-//            api.writeNewLiftRide();
-            //Sleeping on random time to make it realistic
-            try {
-                Thread.sleep((long) 1);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            for (int i = 0; i < RETRY_TIMES; i++) {
+                try {
+                    long startTime = System.currentTimeMillis();
+                    ApiResponse<Void> res = api.writeNewLiftRideWithHttpInfo(tmp.getLiftRide(),
+                            tmp.getResortID(), tmp.getSeasonID(), tmp.getDayID(), tmp.getSkierID());
+                    long endTime = System.currentTimeMillis();
+                    if (res.getStatusCode() == 201 || res.getStatusCode() == 200) {
+                        result.addSuccessfulPost(1);
+                        // todo write successful records before break here
+                        break;
+                    }
+                    if (i == RETRY_TIMES - 1) {
+                        result.addFailedPost(1);
+                    }
+                } catch (ApiException e) {
+                    // todo write failed records before break here
+                    result.addFailedPost(1);
+                    System.err.println("Exception when calling SkierApi#writeNewLiftRide, tried " + i + " times");
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
-
-
 }

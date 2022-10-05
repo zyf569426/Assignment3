@@ -66,6 +66,6 @@ public class Producer implements Runnable{
         LiftRide liftRide = new LiftRide();
         liftRide.setTime(time);
         liftRide.setLiftID(liftID);
-        return new LiftData(resortID, seasonID, dayID, skierID, liftRide);
+        return new LiftData(resortID, String.valueOf(seasonID), String.valueOf(dayID), skierID, liftRide);
     }
 }

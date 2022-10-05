@@ -25,16 +25,56 @@ public class LiftData {
      **/
 
     private int resortID;
-    private int seasonID;
-    private int dayID;
+    private String seasonID;
+    private String dayID;
     private int skierID;
     private LiftRide liftRide;
 
-    public LiftData(int resortID, int seasonID, int dayID, int skierID, LiftRide liftRide) {
+    public LiftData(int resortID, String seasonID, String dayID, int skierID, LiftRide liftRide) {
         this.resortID = resortID;
         this.seasonID = seasonID;
         this.dayID = dayID;
         this.skierID = skierID;
+        this.liftRide = liftRide;
+    }
+
+    public int getResortID() {
+        return resortID;
+    }
+
+    public void setResortID(int resortID) {
+        this.resortID = resortID;
+    }
+
+    public String getSeasonID() {
+        return seasonID;
+    }
+
+    public void setSeasonID(String seasonID) {
+        this.seasonID = seasonID;
+    }
+
+    public String getDayID() {
+        return dayID;
+    }
+
+    public void setDayID(String dayID) {
+        this.dayID = dayID;
+    }
+
+    public int getSkierID() {
+        return skierID;
+    }
+
+    public void setSkierID(int skierID) {
+        this.skierID = skierID;
+    }
+
+    public LiftRide getLiftRide() {
+        return liftRide;
+    }
+
+    public void setLiftRide(LiftRide liftRide) {
         this.liftRide = liftRide;
     }
 
