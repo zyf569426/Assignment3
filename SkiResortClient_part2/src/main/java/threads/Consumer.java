@@ -5,8 +5,10 @@ import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
 import io.swagger.client.api.SkiersApi;
 import models.LiftData;
+import models.Record;
 import models.SendResult;
 
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,6 +35,7 @@ public class Consumer implements Runnable{
     private SendResult result;
     private static int RETRY_TIMES = 5;
     private String BASE_PATH = "http://35.87.95.180:8080/SkiResortServlet_war/";
+    private Queue<Record> records;
 
     /**
      * Instantiates a new Consumer.
@@ -41,13 +44,16 @@ public class Consumer implements Runnable{
      * @param reqCount      the req count
      * @param latch         the latch
      * @param result        the result
+     * @param records       the records
      */
-    public Consumer(BlockingQueue<LiftData> blockingQueue, int reqCount, CountDownLatch latch, SendResult result) {
+    public Consumer(BlockingQueue<LiftData> blockingQueue, int reqCount, CountDownLatch latch,
+                    SendResult result, Queue<Record> records) {
         this.blockingQueue = blockingQueue;
         this.reqCount = reqCount;
         this.latch = latch;
         this.subLatch = new CountDownLatch(this.reqCount);
         this.result = result;
+        this.records = records;
     }
 
 
@@ -87,14 +93,16 @@ public class Consumer implements Runnable{
                     if (res.getStatusCode() == 201 || res.getStatusCode() == 200) {
                         result.addSuccessfulPost(1);
                         // todo write successful records before break here
+                        this.records.offer(new Record(startTime, "POST",
+                                endTime - startTime, res.getStatusCode()));
                         break;
                     }
                     if (i == RETRY_TIMES - 1) {
                         result.addFailedPost(1);
+                        this.records.offer(new Record(startTime, "POST",
+                                endTime - startTime, res.getStatusCode()));
                     }
                 } catch (ApiException e) {
-                    // todo write failed records before break here
-                    result.addFailedPost(1);
                     System.err.println("Exception when calling SkierApi#writeNewLiftRide, tried " + i + " times");
                     e.printStackTrace();
                 }

@@ -1,12 +1,12 @@
-import models.LiftData;
-import models.Phase;
-import models.SendResult;
+import models.*;
 import threads.Consumer;
 import threads.Producer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,10 +38,12 @@ public class Main {
         Producer producer = new Producer(blockingQueue, TOTAL_COUNT);
         Thread producerThread = new Thread(producer);
         producerThread.start();
+        // part 2
+        Queue<Record> records = new ConcurrentLinkedDeque<>();
 
         // create multi consumer thread to send request
         // phase 1
-        runPhase(PHASE1_THREAD_COUNT, blockingQueue, PHASE1_REQUEST_COUNT, sendResult);
+        runPhase(PHASE1_THREAD_COUNT, blockingQueue, PHASE1_REQUEST_COUNT, sendResult, records);
         System.out.println("------------------Phase1 output------------------");
         int phase1Count = sendResult.getSuccessfulPosts();
         System.out.println("total requests has send by Phase 1 threads: " + phase1Count);
@@ -50,7 +52,7 @@ public class Main {
         System.out.println("Phase 1 Time takes: " + (phase1 - start) + "ms");
 
         // phase 2
-        runPhase(PHASE2_THREAD_COUNT, blockingQueue, PHASE2_REQUEST_COUNT, sendResult);
+        runPhase(PHASE2_THREAD_COUNT, blockingQueue, PHASE2_REQUEST_COUNT, sendResult, records);
         System.out.println("------------------Phase2 output------------------");
         int phas2Count = sendResult.getSuccessfulPosts();
         System.out.println("total requests has send by Phase 2 threads: " + (phas2Count - phase1Count));
@@ -71,12 +73,17 @@ public class Main {
         System.out.println("Number of unsuccessful requests: " + failed);
         System.out.println("The total run time(wall time): " + wallTime + " milliseconds");
         System.out.println("The total throughput in requests per second " + totalThroughput);
+
+        // part 2
+        RecordProcessor processor = new RecordProcessor(records, totalThroughput);
+        processor.process();
     }
 
-    private static void runPhase(int threadCount, BlockingQueue<LiftData> queue, int requestCount, SendResult result)
+    private static void runPhase(int threadCount, BlockingQueue<LiftData> queue, int requestCount,
+                                 SendResult result, Queue<Record> records)
             throws InterruptedException {
         CountDownLatch phase1Latch = new CountDownLatch(threadCount);
-        Phase phase = new Phase(threadCount, queue, requestCount, phase1Latch, result);
+        Phase phase = new Phase(threadCount, queue, requestCount, phase1Latch, result, records);
         phase.run();
         phase.await();
     }

@@ -2,6 +2,7 @@ package models;
 
 import threads.Consumer;
 
+import java.util.Queue;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +29,8 @@ public class Phase {
     // total requests counter for each thread
     private SendResult result;
 
+    private Queue<Record> records;
+
     /**
      * Instantiates a new Phase.
      *
@@ -36,14 +39,16 @@ public class Phase {
      * @param phaseReqCount the phase req count
      * @param latch         the latch
      * @param result        the result
+     * @param records       the records
      */
     public Phase(int threadCount, BlockingQueue<LiftData> queue, int phaseReqCount,
-                 CountDownLatch latch, SendResult result) {
+                 CountDownLatch latch, SendResult result, Queue<Record> records) {
         this.threadCount = threadCount;
         this.queue = queue;
         this.reqCount = phaseReqCount;
         this.latch = latch;
         this.result = result;
+        this.records = records;
     }
 
     /**
@@ -52,7 +57,7 @@ public class Phase {
     public void run() {
         for (int i = 0; i < this.threadCount; i++) {
             Thread consumerThread = new Thread(new Consumer(this.queue, this.reqCount,
-                    this.latch, this.result));
+                    this.latch, this.result, this.records));
             consumerThread.start();
         }
     }
