@@ -32,6 +32,7 @@ public class Consumer implements Runnable{
     private CountDownLatch subLatch;
     private SendResult result;
     private static int RETRY_TIMES = 5;
+    private String BASE_PATH = "http://35.87.95.180:8080/SkiResortServlet_war/";
 
     /**
      * Instantiates a new Consumer.
@@ -73,7 +74,8 @@ public class Consumer implements Runnable{
         if (tmp != null) {
             ApiClient client = new ApiClient();
             // todo: Update base path after deploy
-            client.setBasePath("http://127.0.0.1:8080/SkiResortServlet_war_exploded/");
+            // localhost:
+            client.setBasePath(BASE_PATH);
             SkiersApi api = new SkiersApi();
             api.setApiClient(client);
             for (int i = 0; i < RETRY_TIMES; i++) {
@@ -94,7 +96,7 @@ public class Consumer implements Runnable{
                     // todo write failed records before break here
                     result.addFailedPost(1);
                     System.err.println("Exception when calling SkierApi#writeNewLiftRide, tried " + i + " times");
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         }
