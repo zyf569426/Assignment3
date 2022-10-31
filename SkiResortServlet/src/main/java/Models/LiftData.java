@@ -1,16 +1,6 @@
 package Models;
 
-/**
- * The type Lift data.
- *
- * @projectName: SkiResortClient
- * @package: NEU.cs6650.Models
- * @className: LiftData
- * @author: Bignfan Tian
- * @description: TODO
- * @date: 9 /28/22 3:04 PM
- * @version: 1.0
- */
+
 public class LiftData {
 
     /**
@@ -33,6 +23,46 @@ public class LiftData {
         this.seasonID = seasonID;
         this.dayID = dayID;
         this.skierID = skierID;
+        this.liftRide = liftRide;
+    }
+
+    public int getResortID() {
+        return resortID;
+    }
+
+    public void setResortID(int resortID) {
+        this.resortID = resortID;
+    }
+
+    public int getSeasonID() {
+        return seasonID;
+    }
+
+    public void setSeasonID(int seasonID) {
+        this.seasonID = seasonID;
+    }
+
+    public int getDayID() {
+        return dayID;
+    }
+
+    public void setDayID(int dayID) {
+        this.dayID = dayID;
+    }
+
+    public int getSkierID() {
+        return skierID;
+    }
+
+    public void setSkierID(int skierID) {
+        this.skierID = skierID;
+    }
+
+    public LiftRide getLiftRide() {
+        return liftRide;
+    }
+
+    public void setLiftRide(LiftRide liftRide) {
         this.liftRide = liftRide;
     }
 
