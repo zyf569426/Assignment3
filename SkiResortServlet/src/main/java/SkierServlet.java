@@ -15,10 +15,10 @@ public class SkierServlet extends HttpServlet {
     private static final int DAY_MIN = 1;
     private static final int DAY_MAX = 366;
 
-    private final static String RMQ_URL = "localhost";
-//    private final static String RMQ_URL = "35.89.191.176";
+//    private final static String RMQ_URL = "localhost";
+    private final static String RMQ_URL = "54.185.252.153";
 
-    private final static int MAX_CHANNEL_SIZE = 110;
+    private final static int MAX_CHANNEL_SIZE = 30;
     private final static String QUEUE_NAME = "skiersQueue";
     private RMQPool rmqPool;
 
@@ -40,6 +40,7 @@ public class SkierServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println(request.getPathInfo());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         String urlPath = request.getPathInfo();
@@ -90,7 +91,6 @@ public class SkierServlet extends HttpServlet {
 //        response.setCharacterEncoding("UTF-8");
         String urlPath = request.getPathInfo();
 
-        // check we have a URL!
         if (urlPath == null || urlPath.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("missing parameters");
@@ -109,11 +109,13 @@ public class SkierServlet extends HttpServlet {
                 sb.append(s);
                 s = request.getReader().readLine();
             }
-            LiftData liftData = gson.fromJson(sb.toString(), LiftData.class);
-            String payload = request.getPathInfo() + "/body/" + sb.toString();
+            LiftRide liftRide = gson.fromJson(sb.toString(), LiftRide.class);
+            String payload = "resort" +request.getPathInfo() + "/time/" + liftRide.getTime()
+                + "/liftID/"+liftRide.getLiftID();
+//            System.out.println(payload);
             this.publish(payload);
             response.setStatus(HttpServletResponse.SC_CREATED);
-            response.getOutputStream().println(gson.toJson(liftData));
+//            response.getOutputStream().println(gson.toJson(liftRide));
             response.getOutputStream().println("201 It works!");
             response.getOutputStream().flush();
         }
@@ -124,12 +126,11 @@ public class SkierServlet extends HttpServlet {
         try {
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
             channel.basicPublish("", QUEUE_NAME, null, msg.getBytes(StandardCharsets.UTF_8));
-//            System.out.println("msg published to RMQ: " + msg);
         } catch (Exception e) {
-            throw new RuntimeException("Error: failed to opration on channel." + e.toString());
+            throw new RuntimeException("Error: failed to operation on channel." + e.toString());
         }
         this.rmqPool.offer(channel);
-//        System.out.println("new  [x] Sent '" + msg + "'");
+//        System.out.println("[x] Sent '" + msg + "'");
     }
 
 }

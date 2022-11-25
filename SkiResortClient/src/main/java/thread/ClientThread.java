@@ -26,13 +26,9 @@ public class ClientThread implements Runnable{
 
 //    private String BASE_PATH = "http://34.219.167.11:8080/SkiResortServlet_war/";
 
-    private String BASE_PATH = "http://alb-891572878.us-west-2.elb.amazonaws.com:8080/SkiResortServlet_war/";
+//    private String BASE_PATH = "http://alb-891572878.us-west-2.elb.amazonaws.com:8080/SkiResortServlet_war/";
 
-
-
-
-
-//    private static final String BASE_PATH = "http://localhost:8080/SkiResortServlet_war_exploded";
+    private static final String BASE_PATH = "http://localhost:8080/SkiResortServlet_war_exploded";
 
     private Queue<Record> records;
 

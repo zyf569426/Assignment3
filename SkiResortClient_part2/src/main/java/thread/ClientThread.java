@@ -24,7 +24,7 @@ public class ClientThread implements Runnable{
 
 //    private String BASE_PATH = "http://35.88.162.187:8080/HW1-Server_war/";
 
-    private static final String BASE_PATH = "http://localhost:8080/SkiResortServlet_war_exploded/";
+    private static final String BASE_PATH = "http://localhost:8080/SkiResortServlet_war_exploded";
 
     private Queue<Record> records;
 

@@ -17,7 +17,7 @@ public class RMQPool {
 				channel = this.factory.create();
 				pool.put(channel);
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new RuntimeException("Error: RMQ pool create failed");
 			}
 		}
 	}
@@ -26,7 +26,7 @@ public class RMQPool {
 		try {
 			return pool.take();
 		} catch (Exception e) {
-			throw new RuntimeException("Error: no channels available" + e.toString());
+			throw new RuntimeException("Error: Channel poll failed");
 		}
 	}
 

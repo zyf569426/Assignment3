@@ -11,11 +11,11 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class Main {
     private static final int QUEUE_SIZE = 400;
-    private static final int PHASE1_THREAD_COUNT = 1;
-    private static final int PHASE2_THREAD_COUNT = 1;
-    private static final int PHASE1_REQUEST_COUNT = 1;
-    private static final int PHASE2_REQUEST_COUNT = 1;
-    private static final int TOTAL_COUNT = 2;
+    private static final int PHASE1_THREAD_COUNT = 32;
+    private static final int PHASE2_THREAD_COUNT = 168;
+    private static final int PHASE1_REQUEST_COUNT = 1000;
+    private static final int PHASE2_REQUEST_COUNT = 1000;
+    private static final int TOTAL_COUNT = 200000;
 
     public static void main(String[] args) throws InterruptedException {
         long startTime = System.currentTimeMillis();

@@ -9,20 +9,14 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 public class RMQFactory extends BasePooledObjectFactory<Channel> {
 
 	private final Connection connection;
-	private int count;
 
 	public RMQFactory(Connection connection) {
 		this.connection = connection;
-		this.count = 0;
 	}
-
 
 	@Override
 	public Channel create() throws Exception {
-		count++;
-		Channel channel = connection.createChannel();
-		System.out.println("Channel " + count + " created");
-		return channel;
+		return connection.createChannel();
 	}
 
 	@Override
@@ -30,7 +24,4 @@ public class RMQFactory extends BasePooledObjectFactory<Channel> {
 		return new DefaultPooledObject<>(channel);
 	}
 
-	public int getChannelCount() {
-		return count;
-	}
 }
