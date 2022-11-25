@@ -22,8 +22,6 @@ public class DBCPDataSource {
 
 
 	static {
-//		System.setProperty("gate.home", "/some/directory");
-
 		// https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-jdbc-url-format.html
 		dataSource = new BasicDataSource();
 		try {

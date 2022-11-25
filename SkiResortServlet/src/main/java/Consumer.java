@@ -21,8 +21,6 @@ public class Consumer {
 
 	public static void main(String[] argv) throws Exception {
 		LiftRideDao liftRideDao = new LiftRideDao();
-//		liftRideDao.createLiftRide(new LiftRide(10, 2, 3, 5, 500, 20));
-
 		map = new ConcurrentHashMap<>(N_CONSUMER_THREAD);
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost(RABBITMQ_URL);
@@ -32,7 +30,7 @@ public class Consumer {
 			(ThreadPoolExecutor) Executors.newFixedThreadPool(N_CONSUMER_THREAD);
 
 		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-		AtomicInteger count = new AtomicInteger();
+//		AtomicInteger count = new AtomicInteger();
 		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 			String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
 //			System.out.println(" [x] Received '" + message + "'");

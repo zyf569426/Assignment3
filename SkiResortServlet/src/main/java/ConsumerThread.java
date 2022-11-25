@@ -16,7 +16,6 @@ public class ConsumerThread implements Runnable{
 
 	@Override
 	public void run() {
-		//message format: /skiers/8/seasons/2022/days/1/skiers/98776/body/{"time":357,"liftID":12}
 		System.out.println(message);
 		String[] info = message.split("/");
 		String skierID = info[7];
@@ -29,6 +28,5 @@ public class ConsumerThread implements Runnable{
 				Integer.parseInt(info[5]),
 				Integer.parseInt(info[9]),
 				Integer.parseInt(info[11])));
-//		System.out.println("Inserted into database");
 	}
 }
